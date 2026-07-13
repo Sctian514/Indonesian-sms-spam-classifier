@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Deteksi Pesan Spam</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f6f9;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 40px;
+    }
+
+    .container {
+      background-color: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 500px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #2c3e50;
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 10px;
+      display: block;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      padding: 12px;
+      font-size: 16px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      resize: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      font-size: 16px;
+      background-color: #2980b9;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      margin-top: 15px;
+      cursor: pointer;
+    }
+
+    .result {
+      margin-top: 25px;
+      padding: 20px;
+      background-color: #ecf0f1;
+      border-left: 6px solid #2980b9;
+      border-radius: 8px;
+    }
+
+    .result h2 {
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .result p {
+      margin: 5px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🛡️ Deteksi Pesan Spam</h1>
+    <form method="POST" action="/predict">
+      <label for="pesan">Masukkan Pesan:</label>
+      <textarea name="pesan" id="pesan" placeholder="ketik pesan yang ingin diuji...">{{ pesan or '' }}</textarea>
+      <button type="submit">Deteksi Sekarang</button>
+    </form>
+
+    {% if hasil_kategori %}
+      <div class="result">
+        <h2>🔍 Hasil Deteksi:</h2>
+        <p><strong>Kategori:</strong> {{ hasil_kategori }}</p>
+        <p><strong>Jenis Spam:</strong> {{ hasil_jenis }}</p>
+      </div>
+    {% endif %}
+
+    {% if metrik_kategori %}
+      <div class="result">
+        <h2>📊 Metrik Kategori:</h2>
+        <p><strong>Akurasi Model:</strong> {{ "%.2f"|format(akurasi_kategori) }}</p>
+        <p><strong>Precision:</strong> {{ "%.2f"|format(metrik_kategori["precision"]) }}</p>
+        <p><strong>Recall:</strong> {{ "%.2f"|format(metrik_kategori["recall"]) }}</p>
+        <p><strong>F1-Score:</strong> {{ "%.2f"|format(metrik_kategori["f1-score"]) }}</p>
+        <p><strong>Support:</strong> {{ metrik_kategori["support"] }}</p>
+      </div>
+    {% endif %}
+
+    {% if metrik_jenis %}
+      <div class="result">
+        <h2>📊 Metrik Jenis Spam:</h2>
+        <p><strong>Akurasi Model:</strong> {{ "%.2f"|format(akurasi_jenis) }}</p>
+        <p><strong>Precision:</strong> {{ "%.2f"|format(metrik_jenis["precision"]) }}</p>
+        <p><strong>Recall:</strong> {{ "%.2f"|format(metrik_jenis["recall"]) }}</p>
+        <p><strong>F1-Score:</strong> {{ "%.2f"|format(metrik_jenis["f1-score"]) }}</p>
+        <p><strong>Support:</strong> {{ metrik_jenis["support"] }}</p>
+      </div>
+    {% endif %}
+    
+    {% if confidence_kategori %}
+  <div class="result">
+    <h2>🔢 Tingkat Keyakinan Model:</h2>
+    <ul>
+      {% for label, value in confidence_kategori.items() %}
+        <li><strong>{{ label }}:</strong> {{ "%.2f"|format(value * 100) }}%</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+  </div>
+</body>
+</html>
